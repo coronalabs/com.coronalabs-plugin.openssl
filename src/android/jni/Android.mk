@@ -18,6 +18,9 @@ SDK_OPENSSL := $(PLUGIN_DIR)/sdk-openssl/android/libs
 
 # -----------------------------------------------------------------------------
 
+LOCAL_LDFLAGS += "-Wl,-z,max-page-size=16384"
+LOCAL_LDFLAGS += "-Wl,-z,common-page-size=16384"
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcrypto
 LOCAL_SRC_FILES := $(SDK_OPENSSL)/../multiarch/$(TARGET_ARCH_ABI)/libcrypto.a
