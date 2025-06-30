@@ -1,0 +1,5 @@
+Run build-libssl.sh to download load and build a version of OpenSSL for android.
+
+Usage: ./build-libssl.sh [OpenSSL-version] [abi-platform] [Android-NDK-dir]
+
+Products are installed in the correct directory for a build of the Corona OpenSSL plugin to find

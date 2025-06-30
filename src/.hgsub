@@ -1,0 +1,11 @@
+sdk-lua-openssl = ssh://hg@bitbucket.org/coronalabs/sdk-lua-openssl
+sdk-luasocket = ssh://hg@bitbucket.org/coronalabs/sdk-luasocket
+sdk-openssl = ssh://hg@bitbucket.org/coronalabs/sdk-openssl
+
+[subpaths]
+ssh://hg@([^/]+)/.*/external/([A-Za-z0-9-_ .]+) = ssh://hg@\1/external/\2
+http://([^/]+)/.*/external/([A-Za-z0-9-_ .]+) = http://\1/external/\2
+ssh://hg@([^/]+)/.*/subrepos/([A-Za-z0-9-_ .]+) = ssh://hg@\1/projects/\2
+http://([^/]+)/.*/subrepos/([A-Za-z0-9-_ .]+) = http://\1/projects/\2
+ssh://hg@([^/]+)/.*/plugins/([A-Za-z0-9-_ .]+) = ssh://hg@\1/plugins/\2
+http://([^/]+)/.*/plugins/([A-Za-z0-9-_ .]+) = http://\1/plugins/\2

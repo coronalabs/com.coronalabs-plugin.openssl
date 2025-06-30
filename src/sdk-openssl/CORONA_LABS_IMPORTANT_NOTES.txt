@@ -1,0 +1,63 @@
+2016/05/12:
+
+	Updated win32 with OpenSSL 1.0.2h from https://slproweb.com/products/Win32OpenSSL.html
+
+	The directory structure and files included in win32 seem to be arbitrary and appear to
+	come from https://github.com/diorahman/openssl-win32-prebuilt which is no longer maintained.
+	It should be updated to either be built by us (annoyingly complex) or rearranged to be
+	a more direct copy of a known good source of win32 OpenSSL binaries.
+
+---
+
+2016/05/03:
+
+	Updated with OpenSSL 1.0.2h from https://github.com/openssl/openssl/archive/
+
+---
+
+2016/04/30:
+
+	Updated "openssl_android" with OpenSSL 1.0.2g from https://www.openssl.org/source/
+
+---
+
+2014/11/19:
+
+	"AppleUniversal" was last updated on 2014/11/19 with OpenSSL v.1.0.1j.
+
+
+---
+
+2014/6/18:
+
+	This repo was last updated on 2014/6/18 with OpenSSL v.1.0.1h.
+
+---
+
+2014/4/9:
+
+	This repo was last updated on 2014/4/9 with OpenSSL v.1.0.1g.
+
+---
+
+2013/5/1:
+
+	The "openssl" directory contains a modified version of:
+
+		https://github.com/aluvalasuman/OpenSSL1.0.1cForAndroid.git
+
+			commit bde1fe2c52f6b9b2b2a4c7cb6240a0246915b538
+			Date:	Tue Aug 28 10:17:06 2012 -0700
+
+	This is the original OpenSSL, modified to be built with
+	the Android NDK ("ndk-build").
+
+	We updated its copy of OpenSSL from v.1.0.1c to v.1.0.1e.
+
+---
+
+2013/4/18:
+
+	This repo was last updated on 2013/4/18 with OpenSSL v.1.0.1e.
+
+---

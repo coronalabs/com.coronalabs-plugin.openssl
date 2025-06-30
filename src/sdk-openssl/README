@@ -1,0 +1,19 @@
+The built versions for the different platforms are kept in the repo to make simple
+changes to the Corona OpenSSL plugin easier.
+
+Building a new version OpenSSL
+==============================
+
+Android
+
+	Edit openssl_android/build-libssl.sh to indicate the required version of OpenSSL
+	Run it (build products are placed in ./android where they'll be found by the plugin build)
+
+Apple
+
+	Edit openssl_apple/build-libssl.sh to indicate the required version of OpenSSL
+	Run it (build products are placed in ./apple where they'll be found by the plugin build)
+
+Windows
+
+	Find built versions of Windows libraries (e.g. from https://slproweb.com/products/Win32OpenSSL.html) and place them in the ./win32 directory in the appropriate locations

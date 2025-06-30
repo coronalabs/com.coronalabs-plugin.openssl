@@ -1,0 +1,20 @@
+
+---
+
+2013/4/18:
+
+	This repo was last updated on 2013/4/18 from:
+
+		https://github.com/zhaozg/lua-openssl
+
+			commit d26054bfb3d1c69e7805510564bf406843c8d28d
+			Date:   Fri Mar 29 12:20:02 2013 +0800
+
+	Corona depends on luasocket.
+	luasocket has an auxiliar.c and auxiliar.h.
+	lua-openssl also has its own auxiliar.c and auxiliar.h.
+	This caused a duplicate symbol link error.
+	Our solution was to remove the auxiliar.c and auxiliar.h in lua-openssl,
+	then add back the differences as corona_auxiliar.c/corona_auxiliar.h.
+
+---

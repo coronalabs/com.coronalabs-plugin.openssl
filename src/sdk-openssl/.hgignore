@@ -1,0 +1,21 @@
+syntax: glob
+
+xcuserdata/*
+
+# XCode
+*.xcworkspace*
+
+# Hidden files used by the Finder in MacOS
+.DS_Store
+
+# Build files
+build/*
+
+# Downloaded OpenSSL archives
+*/OpenSSL_*.tar.gz
+
+android/android-toolchain-arm/
+android/libs/openssl/man
+android/libs/openssl/misc
+
+openssl_apple/bin
