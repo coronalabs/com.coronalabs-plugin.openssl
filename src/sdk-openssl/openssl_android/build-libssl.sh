@@ -27,7 +27,7 @@
 #  Change values here                                                     #
 #                                                                         #
 VERSION=${1:-'1.0.2h'}
-ARCH=${2:-x64}
+ARCH=${2:-arm}
 ANDROID_NDK=${3:-$ANDROID_NDK}
 PLATFORM=Android
 CURL_OPTIONS=""
@@ -55,45 +55,73 @@ fi
 export NDK="${ANDROID_NDK}"
 
 case "$ARCH" in
-	arm)
-		ARCH_TOOLCHAIN="arm-linux-androideabi-4.9"
-		ARCH_TOOLCHAIN_NAME="arm-linux-androideabi"
-		ARCH_CC_FLAGS="-mthumb"
-		ARCH_LD_FLAGS=
-		;;
-	armv7)
-		ARCH_TOOLCHAIN="arm-linux-androideabi-4.9"
-		ARCH_TOOLCHAIN_NAME="arm-linux-androideabi"
-		ARCH_CC_FLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
-		ARCH_LD_FLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
-		;;
-	armv64)
-		ARCH_TOOLCHAIN="arm-linux-androideabi-4.9"
-		ARCH_TOOLCHAIN_NAME="aarch64-linux-android"
-		ARCH_CC_FLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
-		ARCH_LD_FLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
-		;;
-	x86)
-		ARCH_TOOLCHAIN="x86-4.9"
-		ARCH_TOOLCHAIN_NAME="i686-linux-android"
-		ARCH_CC_FLAGS="-march=i686 -msse3 -mstackrealign -mfpmath=sse"
-		ARCH_LD_FLAGS=
-		;;
-	x64)
-		ARCH_TOOLCHAIN="x86-4.9"
-		ARCH_TOOLCHAIN_NAME="x86_64-linux-android"
-		ARCH_CC_FLAGS="-march=i686 -msse3 -mstackrealign -mfpmath=sse"
-		ARCH_LD_FLAGS=
-		;;
-	*)
-		echo "ERROR: unrecogized architecture: $ARCH"
-		exit 1
+    arm)
+        ARCH_TOOLCHAIN="arm-linux-androideabi-4.9"
+        ARCH_TOOLCHAIN_NAME="arm-linux-androideabi"
+        ARCH_CC_FLAGS="-mthumb"
+        ARCH_LD_FLAGS=
+        ;;
+    armv7)
+        ARCH_TOOLCHAIN="arm-linux-androideabi-4.9"
+        ARCH_TOOLCHAIN_NAME="arm-linux-androideabi"
+        ARCH_CC_FLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
+        ARCH_LD_FLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
+        ;;
+    armv64|arm64)
+        ARCH_TOOLCHAIN="aarch64-linux-android-4.9"
+        ARCH_TOOLCHAIN_NAME="aarch64-linux-android"
+        ARCH_CC_FLAGS="-march=armv8-a"
+        ARCH_LD_FLAGS="-march=armv8-a"
+        ;;
+    x86)
+        ARCH_TOOLCHAIN="x86-4.9"
+        ARCH_TOOLCHAIN_NAME="i686-linux-android"
+        ARCH_CC_FLAGS="-march=i686 -msse3 -mstackrealign -mfpmath=sse"
+        ARCH_LD_FLAGS=
+        ;;
+    x86_64|x64)
+        ARCH_TOOLCHAIN="x86_64-4.9"
+        ARCH_TOOLCHAIN_NAME="x86_64-linux-android"
+        ARCH_CC_FLAGS="-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=intel"
+        ARCH_LD_FLAGS=
+        ;;
+    *)
+        echo "ERROR: unrecognized architecture: $ARCH"
+        echo "Supported architectures: arm, armv7, armv64/arm64, x86, x86_64/x64"
+        exit 1
 esac
 
 TOOLCHAIN_INSTALL_DIR="${OUTPUT_DIR}/android-toolchain-${ARCH}"
 export TOOLCHAIN_INSTALL_DIR
 
-"${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh" --platform=android-16 --toolchain="${ARCH_TOOLCHAIN}" --install-dir="$TOOLCHAIN_INSTALL_DIR"  --verbose --force
+# Check if we have the newer Python-based toolchain script or the older shell script
+if [ -f "${ANDROID_NDK}/build/tools/make_standalone_toolchain.py" ]; then
+    # Newer NDK versions (r18+)
+    case "$ARCH" in
+        arm)
+            NDK_ARCH="arm"
+            ;;
+        armv7)
+            NDK_ARCH="arm"
+            ;;
+        armv64|arm64)
+            NDK_ARCH="arm64"
+            ;;
+        x86)
+            NDK_ARCH="x86"
+            ;;
+        x86_64|x64)
+            NDK_ARCH="x86_64"
+            ;;
+    esac
+    python "${ANDROID_NDK}/build/tools/make_standalone_toolchain.py" --arch "${NDK_ARCH}" --api 21 --stl gnustl --install-dir="$TOOLCHAIN_INSTALL_DIR" --force
+elif [ -f "${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh" ]; then
+    # Older NDK versions
+    "${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh" --platform=android-21 --toolchain="${ARCH_TOOLCHAIN}" --install-dir="$TOOLCHAIN_INSTALL_DIR" --verbose --force
+else
+    echo "ERROR: Could not find NDK toolchain creation script"
+    exit 1
+fi
 
 export TOOLCHAIN_PATH="${TOOLCHAIN_INSTALL_DIR}/bin"
 export NDK_TOOLCHAIN_BASENAME="${TOOLCHAIN_PATH}/${ARCH_TOOLCHAIN_NAME}"
@@ -123,17 +151,22 @@ cd "${WORK_DIR}/openssl-${OPENSSL_ARCHIVE_BASE_NAME}"
 rm -rf "${OUTPUT_DIR}/libs"
 
 case "$ARCH" in
-	arm)
-		./Configure android shared --prefix="${OUTPUT_DIR}/libs" --openssldir=openssl
-		;;
-	armv7)
-		./Configure android-armv7 no-ui no-stdio no-shared --prefix="${OUTPUT_DIR}/libs/armeabi-v7a" --openssldir=openssl
-		;;
-	x86)
-		./Configure android-x86 shared --prefix="${OUTPUT_DIR}/libs/x86"  --openssldir=openssl
-		;;
-    x64)
-        ./Configure android-x86_64 shared --prefix="${OUTPUT_DIR}/libs/x64"  --openssldir=openssl
+    arm)
+        ./Configure android shared --prefix="${OUTPUT_DIR}/libs/armeabi" --openssldir=openssl
+        ;;
+    armv7)
+        ./Configure android-armv7 no-ui no-stdio no-shared --prefix="${OUTPUT_DIR}/libs/armeabi-v7a" --openssldir=openssl
+        ;;
+    armv64|arm64)
+        # For OpenSSL 1.0.2h, use linux-aarch64 as base and modify for Android
+        ./Configure linux-aarch64 shared --prefix="${OUTPUT_DIR}/libs/arm64-v8a" --openssldir=openssl
+        ;;
+    x86)
+        ./Configure android-x86 shared --prefix="${OUTPUT_DIR}/libs/x86" --openssldir=openssl
+        ;;
+    x86_64|x64)
+        # For OpenSSL 1.0.2h, use linux-x86_64 as base and modify for Android
+        ./Configure linux-x86_64 shared --prefix="${OUTPUT_DIR}/libs/x86_64" --openssldir=openssl
         ;;
 esac
 
@@ -141,8 +174,8 @@ make clean && make && make install
 
 if [ $? != 0 ]
 then
-	echo "If 'make' fails, try running it again to work around OpenSSL issue: make && make install"
-	exit 1
+    echo "If 'make' fails, try running it again to work around OpenSSL issue: make && make install"
+    exit 1
 fi
 
 echo

@@ -16,6 +16,12 @@ SDK_LUA_OPENSSL := $(PLUGIN_DIR)/sdk-lua-openssl/src
 SDK_LUASOCKET := $(PLUGIN_DIR)/sdk-luasocket/src
 SDK_OPENSSL := $(PLUGIN_DIR)/sdk-openssl/android/libs
 
+# Quick debug checks
+$(info TARGET_ARCH_ABI = $(TARGET_ARCH_ABI))
+$(info SDK_OPENSSL = $(SDK_OPENSSL))
+$(info libssl.a path = $(SDK_OPENSSL)/../multiarch/$(TARGET_ARCH_ABI)/libssl.a)
+$(info libssl.a exists = $(wildcard $(SDK_OPENSSL)/../multiarch/$(TARGET_ARCH_ABI)/libssl.a))
+$(info openssl headers exist = $(wildcard $(SDK_OPENSSL)/include/openssl/ssl.h))
 # -----------------------------------------------------------------------------
 
 LOCAL_LDFLAGS += "-Wl,-z,max-page-size=16384"
