@@ -24,9 +24,6 @@ $(info libssl.a exists = $(wildcard $(SDK_OPENSSL)/../multiarch/$(TARGET_ARCH_AB
 $(info openssl headers exist = $(wildcard $(SDK_OPENSSL)/include/openssl/ssl.h))
 # -----------------------------------------------------------------------------
 
-LOCAL_LDFLAGS += "-Wl,-z,max-page-size=16384"
-LOCAL_LDFLAGS += "-Wl,-z,common-page-size=16384"
-
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcrypto
 LOCAL_SRC_FILES := $(SDK_OPENSSL)/../multiarch/$(TARGET_ARCH_ABI)/libcrypto.a
@@ -124,6 +121,9 @@ LOCAL_CFLAGS := \
 	-DRtt_ANDROID_ENV
 
 LOCAL_LDLIBS := -llog -lz
+
+LOCAL_LDFLAGS += "-Wl,-z,max-page-size=16384"
+LOCAL_LDFLAGS += "-Wl,-z,common-page-size=16384"
 
 LOCAL_SHARED_LIBRARIES := \
 	liblua \
