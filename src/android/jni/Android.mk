@@ -120,6 +120,15 @@ LOCAL_CFLAGS := \
 	-D_REENTRANT \
 	-DRtt_ANDROID_ENV
 
+# clang 16+ (NDK r26/r28) promotes these C89-isms to errors; the luasocket and
+# lua-openssl sources predate that. Keep them warnings so r28 can build them.
+LOCAL_CFLAGS += \
+	-Wno-error=implicit-function-declaration \
+	-Wno-error=implicit-int \
+	-Wno-error=int-conversion \
+	-Wno-error=incompatible-pointer-types \
+	-Wno-error=deprecated-non-prototype
+
 LOCAL_LDLIBS := -llog -lz
 
 LOCAL_LDFLAGS += "-Wl,-z,max-page-size=16384"
